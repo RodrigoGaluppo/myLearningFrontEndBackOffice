@@ -1,79 +1,478 @@
-import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue } from "@chakra-ui/react";
-import { FaBook, FaImage, FaPlay, FaUser } from "react-icons/fa";
-
-import PieChart from "../components/PieChart";
-import LineChart from "../components/LineChart";
-import PanelGrid from "../components/PanelGrid";
+import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal, VStack } from "@chakra-ui/react";
 import SidebarWithHeader from "../components/SideBar";
-import CardModule from "../components/CardModule";
+import { LegacyRef, useEffect, useRef, useState } from "react";
+import api from "../services/apiClient";
+import { useAuth } from "../hooks/AuthContext";
+import Loader from "../components/Loader";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 
+interface IChapter{
+  id:number;
+  title:string
+}
 
-export default function PanelCourse() {
+interface ICourse{
+  id:number | undefined;
+  name:string | undefined;
+  imgUrl:string | undefined;
+  description:string | undefined;
+}
+
+const ModalCreateChapter = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})=>{
+
+  const [title,setTitle] = useState("")
+  const {id} = useParams()
+  const [isLoading,setIsLoading] = useState(false)
+  const navigate = useNavigate()    
+  const toast = useToast()
+  const {token} = useAuth()
+
+  const handleSendCourse = ()=>{
+    setIsLoading(true)
+
+    api.post("chapter",{
+      title,
+      courseId:id
+    },{ headers: {"Authorization" : `Bearer ${token}`}})
+    .then(res=>{
+      toast({
+        title: 'Course successfully published',
+        description: "",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+      setIsLoading(false)
+
+      onClose()
+
+      navigate("/Chapter/" + res.data.id)
+      
+      
+    }).catch(()=>{
+      toast({
+        title: 'Could not publish Course',
+        description: "try again later",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+      setIsLoading(false)
+    })
+
+  }
+
+  return(
+    <Modal  
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <Loader isLoading={isLoading} />
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>New Chapter</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody pb={6}>
+         <FormControl>
+            <FormLabel>Title</FormLabel>
+            <Input onChange={(e)=>{
+              setTitle(e.target.value)
+            }} placeholder='Title' />
+          </FormControl>  
+
+        </ModalBody>
+
+        <ModalFooter>
+          <Button onClick={()=>{handleSendCourse()}} colorScheme='pink' mr={3}>
+            Send
+          </Button>
+          <Button onClick={onClose}>Cancel</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  )
+}
+
+export default function PanelSubject() {
   
+  const {token} = useAuth()
+  const [isLoading,setIsLoading] = useState(false)
+  const {id} = useParams()
+  const [course,setCourse] = useState<ICourse>()
+  const toast = useToast()
+
+  const [courses, setCourses] = useState<ICourse[]>()
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const  [searchParams, setSearchParams] = useSearchParams()
+
+  const [maxPage, setMaxPage] = useState(0)
+
+  const inputFilesRef = useRef<HTMLInputElement>(null)
+
+  const [Chapters,setChapters] = useState<IChapter[]>()
+
+
+  // method to update courses image
+
+  const onHandleUpdateCourseImage = (e:any)=>{
+    e.preventDefault()
+
+    if(!inputFilesRef.current?.files || inputFilesRef.current?.files?.length == 0){
+
+      toast({
+        title: 'Please select a file to update',
+        description: "",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+
+      return
+    }
+
+    setIsLoading(true)
+
+    let formData:FormData = new FormData()
+
+    formData.append("img", inputFilesRef.current.files[0])
+
+    api.put(`course/image/${id}`,formData,{ headers: {
+      "Authorization" : `Bearer ${token}`,
+      'Content-Type': 'multipart/form-data'
+    }}).then((res)=>{
+       
+      setCourse(res.data)
+     
+      setIsLoading(false)
+
+      toast({
+            title: 'Course successfully updated',
+            description: "",
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+            position:"top-left"
+          })
+      }).catch(err=>{
+          toast({
+            title: 'Could not update course',
+            description: "",
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+            position:"top-left"
+          })
+
+          setIsLoading(false)
+      })
+
+  }
+
+  // method to update course
+  const onHandleUpdateCourse = (e:any)=>{
+    e.preventDefault()
+    setIsLoading(true)
+    api.put(`course/${id}`,{
+     ...course
+    },{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+       
+      setCourse(res.data)
+     
+      setIsLoading(false)
+
+      toast({
+            title: 'Course successfully updated',
+            description: "",
+            status: 'success',
+            duration: 9000,
+            isClosable: true,
+            position:"top-left"
+          })
+      }).catch(err=>{
+          toast({
+            title: 'Could not update course',
+            description: "",
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+            position:"top-left"
+          })
+
+          setIsLoading(false)
+      })
+
+  }
+
+  // method to load course info
+  useEffect(()=>{
+
+    setIsLoading(true)
+    api.get(`course/${id}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+       
+      setCourse(res.data)
+     
+      setIsLoading(false)
+    
+
+  }).catch(err=>{
+  
+    toast({
+      title: 'Can not load course',
+      description: "try again later",
+      status: 'error',
+      duration: 9000,
+      isClosable: true,
+      position:"top-left"
+    })
+
+
+      setIsLoading(false)
+  })
+
+  },[])
+
+  // method to make sure page always start at 1
+  useEffect(()=>{ 
+
+    let search = String(searchParams.get("search"))
+    
+    if(typeof(search) == typeof("")){
+      setSearchParams({
+          page: "1",
+          
+          search
+       })
+  }
+  else{
+      
+       setSearchParams({
+          page: "1"
+       })
+  }
+  },[])
+
+  // method to update page when params change
+  useEffect(()=>{
+
+    setIsLoading(true)
+    // list chapters of course
+    api.get(`chapter/list/${id}?page=${searchParams.get("page") || "1"}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+       
+      console.log(res.data);
+      
+      setChapters(res.data?.chapters)
+      setMaxPage(res.data?.count)
+
+      setIsLoading(false)
+
+    }).catch(err=>{
+
+      toast({
+        title: 'Can not load chapters',
+        description: "try again later",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+
+      setIsLoading(false)
+  })
+
+  },[searchParams])
+
+  const handleClickNext = ()=>{
+
+    let page = Number(searchParams.get("page"))
+    let search = String(searchParams.get("search"))
+    
+  
+    if(page >= maxPage)
+      {
+        toast({
+          title: 'Can not go to next page',
+          description: "it is the last page",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+          position:"top-left"
+        })
+
+        return
+      }
+
+    if(typeof(search) == typeof("")){
+        setSearchParams({
+            page: (page + 1 ).toString(),
+            
+            search
+         })
+    }
+    else{
+        
+         setSearchParams({
+            page: (page + 1 ).toString()
+         })
+    }
+}
+
+const handleClickPrevious = ()=>{
+
+    let page = Number(searchParams.get("page"))
+    let search = String(searchParams.get("search"))
+
+    if(page - 1 <= 0){
+      toast({
+        title: 'Can not go to previous page',
+        description: "it is the first page",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+
+      return
+    }
+
+    if(typeof(search) == typeof("")){
+        setSearchParams({
+            page: (page - 1 > 1 ? page - 1 : 1 ).toString(),
+           search
+         })
+    }
+    else{
+        
+         setSearchParams({
+            page: (page - 1 > 1 ? page - 1 : 1 ).toString(),
+          
+         })
+    }
+
+  }
 
   return (
     <>
     <SidebarWithHeader>
+          <ModalCreateChapter isOpen={isOpen} onClose={onClose} />
+          <Loader isLoading={isLoading}/>
+          <Container maxW="3xl" >
+          <Stack w="100%" margin={"0 auto"} spacing={4}>
+              <Heading textAlign={"center"} w="100%">
+                Course Info
+              </Heading>
+                <form onSubmit={onHandleUpdateCourseImage}>
+                  <FormLabel>
+                    Image:
+                  </FormLabel>
+                <FormControl>
+                    
+                    <Box margin={"0 auto"}  boxSize={"lg"}>
+                      <Image fallbackSrc='https://via.placeholder.com/300'  h="100%" w="100%" objectFit={"contain"} src={course?.imgUrl} ></Image>
+                      
+                    </Box>
+                    <Input
+                      mt="2"
+                      type="file"
+                      h="100%"
+                      accept="image/"
+                      ref={inputFilesRef} p="4" py="8" 
+                      bg={useColorModeValue("gray.50","gray.900")} fontSize={"xl"} 
+                      />
+
+                    </FormControl>
+                    <Button mt="2" onClick={onHandleUpdateCourseImage} colorScheme='pink'>
+                    Save
+                  </Button>
+                </form>
+                <form onSubmit={onHandleUpdateCourse}>
+                
+                  <VStack>
+                  <FormLabel  w="100%" textAlign={"left"}>
+                    Name:
+                  </FormLabel>
+                  <FormControl>
+                    <Input onChange={e=> 
+
+                    setCourse({
+                            id:course?.id,
+                            name:e.target.value,
+                            description:course?.description,
+                            imgUrl:course?.imgUrl
+                          })
+
+                    } p="4" py="8" bg={useColorModeValue("gray.50","gray.900")} fontSize={"xl"} defaultValue={course?.name} />
+                    
+                    </FormControl> 
+                    <FormLabel w="100%" textAlign={"left"}>
+                    Description
+                  </FormLabel>
+                    <FormControl >
+                    <Textarea onChange={e=> 
+                      setCourse({
+                        id:course?.id,
+                        name:course?.name,
+                        description:e.target.value,
+                        imgUrl:course?.imgUrl
+                      })
+                    } p="4" py="8" bg={useColorModeValue("gray.50","gray.900")} fontSize={"xl"} defaultValue={course?.description} />
+                    
+                    </FormControl> 
+                  </VStack>
  
-      <SimpleGrid  columns={{ base: 1, md: 2 }} spacing={10}>
-            <Stack  spacing={4}>
-                <Text
-                textTransform={'uppercase'}
+                 <ButtonGroup display='flex' justifyContent='flex-end'>
                 
-                fontWeight={600}
-                fontSize={'sm'}
-                bg={useColorModeValue('pink.400', 'pink.400')}
-                p={2}
-                alignSelf={'flex-start'}
-                rounded={'md'}>
-                Em ALTA
-                </Text>
-                <Input p="4" py="8" bg={useColorModeValue("gray.50","gray.900")} fontSize={"3xl"} defaultValue="Curso 1" ></Input>
-                <Textarea p="4" bg={useColorModeValue("gray.50","gray.900")} defaultValue={"um curso muito bomdedicado a atender tudo o que voce precisa no momento que precisa"} color={'gray.500'} fontSize={'lg'}>
-                
-                </Textarea>
-
-                <ButtonGroup display='flex' justifyContent='flex-end'>
-                <Button variant='outline' >
-                  Cancel
-                </Button>
-                <Button  colorScheme='pink'>
-                  Save
-                </Button>
-              </ButtonGroup>
-            </Stack>
-            <Box>
-                <Image
-                rounded={'md'}
-                
-                alt={'feature image'}
-                src={
-                    'https://images.unsplash.com/photo-1554200876-56c2f25224fa?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'
-                }
-                objectFit={'cover'}
-                />
-                <IconButton colorScheme={"pink"} position={"relative"} width="60px" height={"60px"} bottom="60px" icon={<FaImage />} aria-label={""} ></IconButton>
-            </Box>
-        </SimpleGrid>
-        <Heading my="10"  >
-            <Center>Modulos </Center>
-            <Box pl="8" >
-            <ButtonGroup>
-                    <Button  colorScheme='pink' >
-                        novo modulo
-                    </Button>
-                </ButtonGroup>
-            </Box>
+                 <Button mt="2" onClick={onHandleUpdateCourse} colorScheme='pink'>
+                   Save
+                 </Button>
+                 </ButtonGroup>
+                </form>
+               
+          </Stack>
+        <Heading textAlign={"center"} w="100%">
+          Chapters
         </Heading>
-        <SimpleGrid minChildWidth='300px' spacing={4}>
-            <CardModule/>
-            <CardModule/>
-            <CardModule/>
-            <CardModule/>
-        </SimpleGrid>
+        <Flex w="100%" justifyContent={"space-between"}  >
+        <Button onClick={onOpen} colorScheme="pink" >Create a Chapter</Button>
         
+        
+      </Flex>
+           <List mt="4"  w="100%" mb="4" pb="4" spacing={3} maxH="400px" overflowY={"auto"} >
+                 
+                 {
+                   Chapters?.map(Chapter=>(
+                     <ListItem key={Chapter.id} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
+                     <Link style={{width:"100%",height:"100%"}} to={`/Chapter/${Chapter.id}`}>          
+                       <Flex alignItems={"center"}>
+                          
+                         <Text pl="4" fontSize={"large"}>{Chapter.title}  </Text> 
+                       </Flex>
+                     </Link>          
+                 </ListItem>
+                   ))
+                 }
 
-    
+                 {Chapters?.length == 0 && <Text mt="4" textAlign={"center"} fontSize={"md"}>There are no Chapters</Text>}
+                 
+                     
+             </List>
+   
+             <Flex w="100%" justifyContent={"space-between"}>
+               <Button colorScheme="pink"  onClick={handleClickPrevious} size={"lg"}>
+                       <FiArrowLeft/> Previous
+                   </Button>
+   
+                   <Button colorScheme="pink" onClick={handleClickNext} size={"lg"}>
+                       Next <FiArrowRight/>
+                   </Button>
+               </Flex>
+          </Container>
+           
     </SidebarWithHeader>
     </>
   );

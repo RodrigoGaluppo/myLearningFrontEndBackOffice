@@ -45,9 +45,9 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', icon: FiTrendingUp, link:"/panel/" },
-  { name: 'Subjects', icon:FaBook, link:"/panel/Subjects/" },
-  { name: 'Customers', icon:FaBook, link:"/panel/Customers/" },
-  { name: 'Settings', icon: FiSettings, link:"/panel/settings/" },
+  { name: 'Subjects', icon:FaBook, link:"/Subjects/" },
+  { name: 'Customers', icon:FaBook, link:"/Customers/" },
+  { name: 'Settings', icon: FiSettings, link:"/settings/" },
 ];
 
 export default function SidebarWithHeader({

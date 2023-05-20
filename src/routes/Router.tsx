@@ -21,6 +21,7 @@ import PrivateRoute from "./PrivateRoute";
 import PrivateRouteComponent from "./PrivateRoute";
 import PanelSubject from "../pages/PanelSubject";
 import PanelSUbjects from "../pages/PanelSubjects";
+import PanelChapter from "../pages/PanelChapter";
 
 
 
@@ -36,14 +37,13 @@ const Router:React.FC = ()=>{
                 <Route element={<Login/>} path="/" />
                 
                 <Route element={ <PrivateRoute component={PanelSUbjects}></PrivateRoute>} path="/Subjects" ></Route>
-
+                <Route element={ <PrivateRoute component={PanelCourse}></PrivateRoute>} path="/Course/:id" ></Route>
                 <Route element={ <PrivateRoute component={PanelSubject}></PrivateRoute>} path="/Subject/:id" ></Route>
+                <Route element={ <PrivateRoute component={PanelChapter}></PrivateRoute>} path="/Chapter/:id" ></Route>
+                <Route element={ <PrivateRoute component={PanelLesson}></PrivateRoute>} path="/Lesson/:id" ></Route>
 
                 <Route element={ <PrivateRoute component={Panel}></PrivateRoute>} path="/panel" ></Route>
 
-                <Route element={ <PrivateRoute component={PanelCourses}></PrivateRoute>} path="/panel/courses/" ></Route>
-
-                <Route element={<PrivateRoute component={PanelLesson} ></PrivateRoute>} path="/panel/courses/lesson/" ></Route>
                 <Route element={
                     <PrivateRoute component={PanelCourse}  ></PrivateRoute>
                 } path="/panel/curse/:id" ></Route> // page to edit course info

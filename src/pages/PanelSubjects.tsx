@@ -16,15 +16,13 @@ import api from "../services/apiClient";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight, FiSearch } from "react-icons/fi";
 
-interface Subject {
+interface ISubject {
   id:number;
   name:string;
 
 }
 
-
-// 3. Create the Popover
-// Ensure you set `closeOnBlur` prop to false so it doesn't close on outside click
+// modal to create subject
 const ModalCreateSubject = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})=>{
     
 
@@ -103,6 +101,7 @@ const ModalCreateSubject = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void}
   )
 }
 
+
 export default function PanelSUbjects() {
 
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -113,11 +112,52 @@ export default function PanelSUbjects() {
 
   const {token} = useAuth()
 
-  const [subjects,setSubjects] = useState<Subject[]>()
+  const [subjects,setSubjects] = useState<ISubject[]>()
 
   const [isLoading,setIsLoading] = useState(false)
 
   const toast = useToast()
+
+
+  // method to make sure page always start at 1
+  useEffect(()=>{ 
+
+    let search = String(searchParams.get("search"))
+    
+    if(typeof(search) == typeof("")){
+      setSearchParams({
+          page: "1",
+          
+          search
+       })
+  }
+  else{
+      
+       setSearchParams({
+          page: "1"
+       })
+  }
+  },[])
+
+  // method to make sure page always start at 1
+  useEffect(()=>{
+
+    let search = String(searchParams.get("search"))
+    
+    if(typeof(search) == typeof("")){
+      setSearchParams({
+          page: "1",
+          
+          search
+       })
+  }
+  else{
+      
+       setSearchParams({
+          page: "1"
+       })
+  }
+  },[])
 
   useEffect(()=>{
        
@@ -144,7 +184,7 @@ export default function PanelSUbjects() {
     
    
 
-    if(page  == maxPage)
+    if(page >= maxPage)
       {
         toast({
           title: 'Can not go to next page',
@@ -219,7 +259,7 @@ const handleClickPrevious = ()=>{
       </Center>
 
       <VStack maxW="3xl" margin={"0 auto"}>
-      <Flex w="100%" justifyContent={"space-between"} p="4" >
+      <Flex w="100%" justifyContent={"space-between"}  >
         <Button onClick={onOpen} colorScheme="pink" >Create a Subject</Button>
         
         <Box>
@@ -246,7 +286,7 @@ const handleClickPrevious = ()=>{
               {
                 subjects?.map(subject=>(
                   <ListItem key={subject.id} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
-                  <Link style={{width:"100%",height:"100%"}} to={`/subject/${subject.id}}`}>          
+                  <Link style={{width:"100%",height:"100%"}} to={`/subject/${subject.id}`}>          
                     <Flex>
                       <Text fontSize={"large"}>{subject.name}  </Text> 
                     </Flex>
@@ -254,7 +294,8 @@ const handleClickPrevious = ()=>{
               </ListItem>
                 ))
               }
-              
+                {subjects?.length == 0 && <Text mt="4" textAlign={"center"} fontSize={"md"}>There are no subjects</Text>}
+                 
                    
           </List>
 

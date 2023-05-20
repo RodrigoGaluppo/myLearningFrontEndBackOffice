@@ -9,19 +9,18 @@ import Loader from "../components/Loader";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight, FiSearch } from "react-icons/fi";
 
-interface ISubject{
+interface IChapter{
   id:number;
-  name:string;
+  title:string;
 }
 
-interface ICourse{
+interface ILesson{
   id:number;
-  name:string;
-  imgUrl:string
-
+  title:string;
+  description:string;
 }
 
-const ModalCreateCourse = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})=>{
+const ModalCreateLesson = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})=>{
 
   const [name,setName] = useState("")
   const [description,setDescription] = useState("")
@@ -31,17 +30,17 @@ const ModalCreateCourse = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})
   const toast = useToast()
   const {token} = useAuth()
 
-  const handleSendCourse = ()=>{
+  const handleSendLesson = ()=>{
     setIsLoading(true)
 
-    api.post("course",{
-      name,
+    api.post("lesson",{
+      title:name,
       description,
-      subjectId:id
+      chapterId:id
     },{ headers: {"Authorization" : `Bearer ${token}`}})
     .then(res=>{
       toast({
-        title: 'Course successfully published',
+        title: 'Lesson successfully published',
         description: "",
         status: 'success',
         duration: 9000,
@@ -52,12 +51,12 @@ const ModalCreateCourse = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})
 
       onClose()
 
-      navigate("/Course/" + res.data.id)
+      navigate("/Lesson/" + res.data.id)
       
       
     }).catch(()=>{
       toast({
-        title: 'Could not publish Course',
+        title: 'Could not publish Lesson',
         description: "try again later",
         status: 'error',
         duration: 9000,
@@ -77,7 +76,7 @@ const ModalCreateCourse = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})
       <Loader isLoading={isLoading} />
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>New Course</ModalHeader>
+        <ModalHeader>New Lesson</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
          <FormControl>
@@ -97,7 +96,7 @@ const ModalCreateCourse = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={()=>{handleSendCourse()}} colorScheme='pink' mr={3}>
+          <Button onClick={()=>{handleSendLesson()}} colorScheme='pink' mr={3}>
             Send
           </Button>
           <Button onClick={onClose}>Cancel</Button>
@@ -107,15 +106,15 @@ const ModalCreateCourse = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})
   )
 }
 
-export default function PanelSubject() {
+export default function PanelChapter() {
   
   const {token} = useAuth()
   const [isLoading,setIsLoading] = useState(false)
   const {id} = useParams()
-  const [subject,setSubject] = useState<ICourse>()
+  const [Chapter,setChapter] = useState<IChapter>()
   const toast = useToast()
 
-  const [courses, setCourses] = useState<ICourse[]>()
+  const [Lessons, setLessons] = useState<ILesson[]>()
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -123,22 +122,23 @@ export default function PanelSubject() {
 
   const [maxPage, setMaxPage] = useState(0)
 
-  const [subjectName,setSubjectName] = useState("")
+  const [ChapterTitle,setChapterTitle] = useState("")
 
-  // method to update subject
-  const onHandleUpdateSubject = (e:any)=>{
+  // method to update Chapter
+  const onHandleUpdateChapter = (e:any)=>{
     e.preventDefault()
     setIsLoading(true)
-    api.put(`subject/${id}`,{
-      name:subjectName
+    api.put(`chapter/${id}`,{
+      title:ChapterTitle,
+      
     },{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
        
-      setSubject(res.data)
+      setChapter(res.data)
      
       setIsLoading(false)
 
       toast({
-            title: 'Subject successfully updated',
+            title: 'Chapter successfully updated',
             description: "",
             status: 'success',
             duration: 9000,
@@ -147,7 +147,7 @@ export default function PanelSubject() {
           })
       }).catch(err=>{
           toast({
-            title: 'Could not update subject',
+            title: 'Could not update Chapter',
             description: "",
             status: 'error',
             duration: 9000,
@@ -160,13 +160,13 @@ export default function PanelSubject() {
 
   }
 
-  // method to load subject info
+  // method to load Chapter info
   useEffect(()=>{
 
     setIsLoading(true)
-    api.get(`subject/${id}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+    api.get(`Chapter/${id}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
        
-      setSubject(res.data)
+      setChapter(res.data)
      
       setIsLoading(false)
   }).catch(err=>{
@@ -200,10 +200,10 @@ export default function PanelSubject() {
   useEffect(()=>{
 
     setIsLoading(true)
-    api.get(`course/list?subjectId=${id}&page=${searchParams.get("page") || 1}&search=${ searchParams.get("search") || "" }`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+    api.get(`lesson/list/${id}?page=${searchParams.get("page") || 1}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
        
-      setCourses(res?.data?.courses);
-      console.log(res.data.courses);
+      setLessons(res?.data?.lessons);
+      console.log(res.data);
       
       setMaxPage(res?.data?.count)
      
@@ -288,25 +288,25 @@ const handleClickPrevious = ()=>{
   return (
     <>
     <SidebarWithHeader>
-          <ModalCreateCourse isOpen={isOpen} onClose={onClose} />
+          <ModalCreateLesson isOpen={isOpen} onClose={onClose} />
           <Loader isLoading={isLoading}/>
           <Container maxW="3xl" >
           <Stack w="100%" margin={"0 auto"} spacing={4}>
-                <Heading textAlign={"center"} w="100%">
-                Subject Info
+              <Heading textAlign={"center"} w="100%">
+                Chapter Info
               </Heading>
-                <form onSubmit={onHandleUpdateSubject}>
+                <form onSubmit={onHandleUpdateChapter}>
                   <FormLabel>
                     Name:
                   </FormLabel>
                 <FormControl>
-                <Input onChange={e=> setSubjectName(e.target.value)} p="4" py="8" bg={useColorModeValue("gray.50","gray.900")} fontSize={"xl"} defaultValue={subject?.name} ></Input>
+                <Input onChange={e=> setChapterTitle(e.target.value)} p="4" py="8" bg={useColorModeValue("gray.50","gray.900")} fontSize={"xl"} defaultValue={Chapter?.title} ></Input>
                 
                  </FormControl> 
  
                  <ButtonGroup display='flex' justifyContent='flex-end'>
                 
-                 <Button onClick={onHandleUpdateSubject} colorScheme='pink'>
+                 <Button onClick={onHandleUpdateChapter} colorScheme='pink'>
                    Save
                  </Button>
                  </ButtonGroup>
@@ -314,48 +314,29 @@ const handleClickPrevious = ()=>{
                
           </Stack>
         <Heading textAlign={"center"} w="100%">
-          Courses
+          Lessons
         </Heading>
         <Flex w="100%" justifyContent={"space-between"}  >
-        <Button onClick={onOpen} colorScheme="pink" >Create a Course</Button>
+        <Button onClick={onOpen} colorScheme="pink" >Create a Lesson</Button>
         
-        <Box>
-        <InputGroup w="100%">
-        <Input onChangeCapture={(e)=>{
-
-        let page = Number(searchParams.get("page"))
-        setSearchParams({page: (page - 1 >= 1 ? page - 1 : 1).toString(),search:e.currentTarget.value })
-
-        }} type="text"  />
-
-          <InputRightElement width='4.5rem'>
-              <InputRightAddon w="100%" h="100%"  >
-                  <FiSearch/>
-              </InputRightAddon>
-          </InputRightElement>
-
-        </InputGroup>
-        </Box>
+       
         
       </Flex>
            <List mt="4"  w="100%" mb="4" pb="4" spacing={3} maxH="400px" overflowY={"auto"} >
                  
                  {
-                   courses?.map(course=>(
-                     <ListItem key={course.id} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
-                     <Link style={{width:"100%",height:"100%"}} to={`/course/${course.id}`}>          
+                   Lessons?.map(Lesson=>(
+                     <ListItem key={Lesson.id} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
+                     <Link style={{width:"100%",height:"100%"}} to={`/Lesson/${Lesson.id}`}>          
                        <Flex alignItems={"center"}>
-                          <Box maxW="20">
-                            <Image w="100%" h="100%" objectFit={"contain"} src={course.imgUrl} ></Image>
-                          </Box>
-                         <Text pl="4" fontSize={"large"}>{course.name}  </Text> 
+                         <Text pl="4" fontSize={"large"}>{Lesson.title}  </Text> 
                        </Flex>
                      </Link>          
                  </ListItem>
                    ))
                  }
                  
-                 {courses?.length == 0 && <Text mt="4" textAlign={"center"} fontSize={"md"}>There are no courses</Text>}
+                 {Lessons?.length == 0 && <Text mt="4" textAlign={"center"} fontSize={"md"}>There are no Lessons</Text>}
                  
                      
              </List>
