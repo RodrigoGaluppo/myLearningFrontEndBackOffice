@@ -1,13 +1,10 @@
 import { AlertDialog, AlertDialogBody, AlertDialogCloseButton, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button } from "@chakra-ui/react";
-import { useRef } from "react";
+import { ReactNode, useRef } from "react";
 
 
+const VerifyPrompt:React.FC<{isOpen:boolean; onOpen:()=>void, onClose:()=>void, children:ReactNode}> = ({isOpen,onOpen,onClose,children})=>{
 
-const VerifyPrompt = ({isOpen,onOpen,onClose,OnClickedYes}:
-    {isOpen:boolean; onOpen:()=>void, onClose:()=>void, OnClickedYes:()=>void}
-    )=>{
-
-        const btnRef = useRef<HTMLButtonElement>(null)
+    const btnRef = useRef<HTMLButtonElement>(null)
 
     return (
         <AlertDialog
@@ -28,15 +25,7 @@ const VerifyPrompt = ({isOpen,onOpen,onClose,OnClickedYes}:
             `
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button ref={btnRef} onClick={onClose}>
-              No
-            </Button>
-            <Button onClick={()=>{
-              OnClickedYes()
-              onClose()
-            }} colorScheme='red' ml={3}>
-              Yes
-            </Button>
+            {children}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

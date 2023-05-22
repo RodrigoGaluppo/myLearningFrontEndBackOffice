@@ -2,7 +2,7 @@ import { Flex, Text, Heading, useColorModeValue, Stack, Input, ButtonGroup, Butt
   Box,
   FormControl, 
   useToast, useDisclosure, List, ListItem, Container,
-  FormLabel, PopoverTrigger, PopoverArrow, Popover, PopoverContent, PopoverCloseButton, PopoverHeader, PopoverBody, Textarea } from "@chakra-ui/react";
+  FormLabel, PopoverTrigger, PopoverArrow, Popover, PopoverContent, PopoverCloseButton, PopoverHeader, PopoverBody, Textarea, Checkbox } from "@chakra-ui/react";
 
 import SidebarWithHeader from "../components/SideBar";
 import { useEffect, useRef, useState } from "react";
@@ -54,14 +54,15 @@ export default function PanelLesson() {
   const [Lesson,setLesson] = useState<ILesson>()
   const toast = useToast()
 
-  const [TextLessons, setTextLessons] = useState<ITextLesson[]>()
+  const [isDeletingEnableTextLesson,setIsDeletingEnableTextLesson] = useState(false)
+  const [isDeletingEnableResourceLesson,setIsDeletingEnableResourceLesson] = useState(false)
+  const [isDeletingEnableVideoLesson,setIsDeletingEnableVideoLesson] = useState(false)
 
   const modalCreateTextLesson = useDisclosure()
   const modalCreateVideoLesson = useDisclosure()
   const modalCreateResourceLesson = useDisclosure()
-  const verifyPromptTextLesson = useDisclosure()
-  const verifyPromptResourceLesson = useDisclosure()
-  const verifyPromptVideoLesson = useDisclosure()
+  const verifyPrompt = useDisclosure()
+
 
   // method to update Lesson
   const onHandleUpdateLesson = (e:any)=>{
@@ -254,6 +255,12 @@ export default function PanelLesson() {
           <ModalCreateResourceLesson isOpen={modalCreateResourceLesson.isOpen} onClose={modalCreateResourceLesson.onClose} />
           <ModalCreateTextLesson isOpen={modalCreateTextLesson.isOpen} onClose={modalCreateTextLesson.onClose} />
           <Loader isLoading={isLoading}/>
+
+
+          <VerifyPrompt onClose={verifyPrompt.onClose} onOpen={verifyPrompt.onOpen} isOpen={verifyPrompt.isOpen} >
+            <Button color={"red.400"} onClick={verifyPrompt.onClose} >Ok</Button>          
+          </VerifyPrompt>
+
           <Container maxW="3xl" >
           <Stack w="100%" margin={"0 auto"} spacing={4}>
               <Heading textAlign={"center"} w="100%">
@@ -303,8 +310,17 @@ export default function PanelLesson() {
               Texts
             </Heading>
             <Flex w="100%"mt="2" justifyContent={"space-between"}  >
-            <Button onClick={modalCreateTextLesson.onOpen} colorScheme="pink" >Add a Lesson</Button>
-            
+            <Button onClick={modalCreateTextLesson.onOpen}  colorScheme="pink" >Add a Lesson</Button>
+            <Checkbox onChange={(e)=>{
+              setIsDeletingEnableTextLesson(e.target.checked)
+
+              if(e.target.checked){
+                verifyPrompt.onOpen()
+              }
+
+            }}>
+              Enable Delete
+            </Checkbox>
             </Flex>
            <List mt="4"  w="100%" mb="4" pb="4" spacing={3} maxH="400px" overflowY={"auto"} >
                  
@@ -334,17 +350,17 @@ export default function PanelLesson() {
                               </Popover>
                           </Box>
 
-                          <Button onClick={verifyPromptTextLesson.onOpen} display={"flex"} justifyContent={"space-between"} bg="red.400">
+
+                          <Button onClick={()=>{
+                            onHandleDeleteTextLesson(TextLesson.id)
+                          }} display={"flex"} disabled={!isDeletingEnableTextLesson} justifyContent={"space-between"} bg="red.400">
                             <span>
-                            Delete
+                            Delete {TextLesson.id}
                             </span>
                             <BsTrash ></BsTrash>
                             
                           </Button>
-                          <VerifyPrompt onClose={verifyPromptTextLesson.onClose} onOpen={verifyPromptTextLesson.onOpen} OnClickedYes={()=>[
-                             onHandleDeleteTextLesson(TextLesson.id)
-                          ]} isOpen={verifyPromptTextLesson.isOpen} />
-
+                         
                        </Flex>
                               
                  </ListItem>
@@ -361,7 +377,16 @@ export default function PanelLesson() {
             </Heading>
             <Flex w="100%"mt="2" justifyContent={"space-between"}  >
             <Button onClick={modalCreateVideoLesson.onOpen} colorScheme="pink" >Add a Video</Button>
-            
+            <Checkbox onChange={(e)=>{
+              setIsDeletingEnableVideoLesson(e.target.checked)
+
+              if(e.target.checked){
+                verifyPrompt.onOpen()
+              }
+
+            }}>
+              Enable Delete
+            </Checkbox>
             </Flex>
            <List mt="4"  w="100%" mb="4" pb="4" spacing={3} maxH="400px" overflowY={"auto"} >
                  
@@ -389,17 +414,13 @@ export default function PanelLesson() {
                               </Popover>
                           </Box>
 
-                          <Button onClick={verifyPromptVideoLesson.onOpen} bg="red.400">
+                          <Button disabled={!isDeletingEnableVideoLesson} onClick={()=>{
+                            onHandleDeleteVideoLesson(videoLesson.id)
+                          }} bg="red.400">
                             
                             Delete {" "}
                             <BsTrash></BsTrash>
-                            <VerifyPrompt onClose={verifyPromptVideoLesson.onClose} 
-                            onOpen={verifyPromptVideoLesson.onOpen}
-                            isOpen={verifyPromptVideoLesson.isOpen}
-                            OnClickedYes={()=>{
-                              onHandleDeleteVideoLesson(videoLesson.id)
-                            }}
-                            />
+                            
                           </Button>
 
                        </Flex>
@@ -418,7 +439,17 @@ export default function PanelLesson() {
             </Heading>
             <Flex w="100%"mt="2" justifyContent={"space-between"}  >
             <Button onClick={modalCreateResourceLesson.onOpen} colorScheme="pink" >Add a Resource</Button>
-            
+            <Checkbox onChange={(e)=>{
+              setIsDeletingEnableResourceLesson(e.target.checked)
+
+              if(e.target.checked){
+                verifyPrompt.onOpen()
+                
+              }
+
+            }}>
+              Enable Delete
+            </Checkbox>
             </Flex>
            <List mt="4"  w="100%" mb="4" pb="4" spacing={3} maxH="400px" overflowY={"auto"} >
                  
@@ -447,18 +478,17 @@ export default function PanelLesson() {
                               </Popover>
                           </Box>
 
-                          <Button onClick={verifyPromptResourceLesson.onOpen} bg="red.400">
+                          <Button disabled={!isDeletingEnableResourceLesson} onClick={()=>{
+                            onHandleDeleteResourceLesson(resourceLesson.id)
+                          }} bg="red.400">
                             
                             Delete {" "}
                             <BsTrash></BsTrash>
                             
                           </Button>
-                          <VerifyPrompt onClose={verifyPromptResourceLesson.onClose} onOpen={verifyPromptResourceLesson.onOpen} OnClickedYes={()=>[
-                             onHandleDeleteResourceLesson(resourceLesson.id)
-                          ]} isOpen={verifyPromptResourceLesson.isOpen} />
-
+                      
                        </Flex>        
-                 </ListItem>
+                      </ListItem>
                    ))
                  }
                  
