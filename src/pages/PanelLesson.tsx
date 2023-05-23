@@ -310,7 +310,7 @@ export default function PanelLesson() {
               Texts
             </Heading>
             <Flex w="100%"mt="2" justifyContent={"space-between"}  >
-            <Button onClick={modalCreateTextLesson.onOpen}  colorScheme="pink" >Add a Lesson</Button>
+            <Button onClick={modalCreateTextLesson.onOpen}  colorScheme="pink" >Add a Text</Button>
             <Checkbox onChange={(e)=>{
               setIsDeletingEnableTextLesson(e.target.checked)
 

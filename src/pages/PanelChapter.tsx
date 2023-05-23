@@ -1,4 +1,4 @@
-import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal } from "@chakra-ui/react";
+import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal, Checkbox } from "@chakra-ui/react";
 import { FaBook, FaImage, FaPlay, FaUser } from "react-icons/fa";
 import SidebarWithHeader from "../components/SideBar";
 import CardModule from "../components/CardModule";
@@ -8,6 +8,8 @@ import { useAuth } from "../hooks/AuthContext";
 import Loader from "../components/Loader";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight, FiSearch } from "react-icons/fi";
+import VerifyPrompt from "../components/VerifyPrompt";
+import { BsTrash } from "react-icons/bs";
 
 interface IChapter{
   id:number;
@@ -25,6 +27,8 @@ const ModalCreateLesson = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>void})
   const [name,setName] = useState("")
   const [description,setDescription] = useState("")
   const {id} = useParams()
+
+  const [isDeletingEnableLessonn,setIsDeletingEnableLessonn] = useState(false)
   const [isLoading,setIsLoading] = useState(false)
   const navigate = useNavigate()    
   const toast = useToast()
@@ -124,6 +128,10 @@ export default function PanelChapter() {
 
   const [ChapterTitle,setChapterTitle] = useState("")
 
+  const [isDeletingEnable,setIsDeletingEnable] = useState(false)
+
+  const verifyPrompt = useDisclosure()
+
   // method to update Chapter
   const onHandleUpdateChapter = (e:any)=>{
     e.preventDefault()
@@ -195,6 +203,44 @@ export default function PanelChapter() {
        })
   }
   },[])
+
+
+  const onHandleDeleteLesson=(lessonId:number)=>{
+
+    setIsLoading(true)
+
+    api.delete(`lesson/${lessonId}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+      
+      const newTextLessons = Lessons?.filter(
+        txtL=>(txtL.id != lessonId)
+      )
+
+      toast({
+        title: 'Text Lesson deleted permanentlyt',
+          description: "",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+
+      setLessons(newTextLessons)
+
+      setIsLoading(false)
+      
+    }).catch(err=>{
+
+      toast({
+        title: 'Could not delete Lesson text',
+          description: "",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+      setIsLoading(false)
+    })
+  }
 
   // method to update page when params change
   useEffect(()=>{
@@ -290,6 +336,9 @@ const handleClickPrevious = ()=>{
     <SidebarWithHeader>
           <ModalCreateLesson isOpen={isOpen} onClose={onClose} />
           <Loader isLoading={isLoading}/>
+          <VerifyPrompt onClose={verifyPrompt.onClose} onOpen={verifyPrompt.onOpen} isOpen={verifyPrompt.isOpen} >
+            <Button color={"red.400"} onClick={verifyPrompt.onClose} >Ok</Button>          
+          </VerifyPrompt>
           <Container maxW="3xl" >
           <Stack w="100%" margin={"0 auto"} spacing={4}>
               <Heading textAlign={"center"} w="100%">
@@ -319,19 +368,39 @@ const handleClickPrevious = ()=>{
         <Flex w="100%" justifyContent={"space-between"}  >
         <Button onClick={onOpen} colorScheme="pink" >Create a Lesson</Button>
         
-       
+        <Checkbox onChange={(e)=>{
+              setIsDeletingEnable(e.target.checked)
+
+              if(e.target.checked){
+                verifyPrompt.onOpen()
+              }
+
+            }}>
+              Enable Delete
+            </Checkbox>
         
-      </Flex>
+        </Flex>
            <List mt="4"  w="100%" mb="4" pb="4" spacing={3} maxH="400px" overflowY={"auto"} >
                  
                  {
                    Lessons?.map(Lesson=>(
                      <ListItem key={Lesson.id} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
-                     <Link style={{width:"100%",height:"100%"}} to={`/Lesson/${Lesson.id}`}>          
-                       <Flex alignItems={"center"}>
+                       
+                       <Flex alignItems={"center"} justifyContent={"space-between"}>
+                        <Link style={{width:"100%",height:"100%"}} to={`/Lesson/${Lesson.id}`}>       
                          <Text pl="4" fontSize={"large"}>{Lesson.title}  </Text> 
+                         </Link>  
+                         <Button onClick={()=>{
+                            onHandleDeleteLesson(Lesson.id)
+                          }} display={"flex"} disabled={!isDeletingEnable} justifyContent={"space-between"} bg="red.400">
+                            <span>
+                            Delete {Lesson.id}
+                            </span>
+                            <BsTrash ></BsTrash>
+                            
+                          </Button>
                        </Flex>
-                     </Link>          
+                            
                  </ListItem>
                    ))
                  }
