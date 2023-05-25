@@ -1,4 +1,4 @@
-import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal, VStack } from "@chakra-ui/react";
+import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal, VStack, Checkbox } from "@chakra-ui/react";
 import SidebarWithHeader from "../components/SideBar";
 import { LegacyRef, useEffect, useRef, useState } from "react";
 import api from "../services/apiClient";
@@ -6,6 +6,8 @@ import { useAuth } from "../hooks/AuthContext";
 import Loader from "../components/Loader";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { FaTrash } from "react-icons/fa";
+import VerifyPrompt from "../components/VerifyPrompt";
 
 interface IChapter{
   id:number;
@@ -104,7 +106,7 @@ export default function PanelSubject() {
   const [course,setCourse] = useState<ICourse>()
   const toast = useToast()
 
-  const [courses, setCourses] = useState<ICourse[]>()
+  const [isDeletingEnable,setIsDeletingEnable] = useState(false)
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -115,6 +117,8 @@ export default function PanelSubject() {
   const inputFilesRef = useRef<HTMLInputElement>(null)
 
   const [Chapters,setChapters] = useState<IChapter[]>()
+
+  const verifyPrompt = useDisclosure()
 
 
   // method to update courses image
@@ -257,6 +261,44 @@ export default function PanelSubject() {
   }
   },[])
 
+  const onHandleDeleteChapter=(chapterId:number)=>{
+
+    setIsLoading(true)
+
+    api.delete(`chapter/${chapterId}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+      
+      const newTextChapters = Chapters?.filter(
+        txtL=>(txtL.id != chapterId)
+      )
+
+      toast({
+        title: 'Chapter deleted permanenlty',
+          description: "",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+
+      setChapters(newTextChapters)
+
+      setIsLoading(false)
+      
+    }).catch(err=>{
+
+      toast({
+        title: 'Could not delete Chapter ',
+          description: "",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+      setIsLoading(false)
+    })
+  }
+
+
   // method to update page when params change
   useEffect(()=>{
 
@@ -361,6 +403,11 @@ const handleClickPrevious = ()=>{
     <SidebarWithHeader>
           <ModalCreateChapter isOpen={isOpen} onClose={onClose} />
           <Loader isLoading={isLoading}/>
+          
+          <VerifyPrompt onClose={verifyPrompt.onClose} onOpen={verifyPrompt.onOpen} isOpen={verifyPrompt.isOpen} >
+            <Button color={"red.400"} onClick={verifyPrompt.onClose} >Ok</Button>          
+          </VerifyPrompt>
+
           <Container maxW="3xl" >
           <Stack w="100%" margin={"0 auto"} spacing={4}>
               <Heading textAlign={"center"} w="100%">
@@ -439,7 +486,16 @@ const handleClickPrevious = ()=>{
         </Heading>
         <Flex w="100%" justifyContent={"space-between"}  >
         <Button onClick={onOpen} colorScheme="pink" >Create a Chapter</Button>
-        
+        <Checkbox onChange={(e)=>{
+              setIsDeletingEnable(e.target.checked)
+
+              if(e.target.checked){
+                verifyPrompt.onOpen()
+              }
+
+            }}>
+              Enable Delete
+            </Checkbox>
         
       </Flex>
            <List mt="4"  w="100%" mb="4" pb="4" spacing={3} maxH="400px" overflowY={"auto"} >
@@ -447,12 +503,19 @@ const handleClickPrevious = ()=>{
                  {
                    Chapters?.map(Chapter=>(
                      <ListItem key={Chapter.id} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
-                     <Link style={{width:"100%",height:"100%"}} to={`/Chapter/${Chapter.id}`}>          
-                       <Flex alignItems={"center"}>
-                          
+                      <Flex w="100%" alignItems={"center"} justifyContent={"space-between"}>
+                        <Link style={{width:"100%",height:"100%"}} to={`/Chapter/${Chapter.id}`}>       
                          <Text pl="4" fontSize={"large"}>{Chapter.title}  </Text> 
-                       </Flex>
-                     </Link>          
+                         </Link>  
+                         <Button onClick={()=>{
+                            onHandleDeleteChapter(Chapter.id)
+                          }} display={"flex"} p="4" alignItems={"center"} disabled={!isDeletingEnable} size="lg" justifyContent={"space-between"} bg="red.400">
+                            
+                            Delete 
+                            
+                            <Icon ml="2"><FaTrash></FaTrash></Icon>
+                          </Button>
+                       </Flex>       
                  </ListItem>
                    ))
                  }

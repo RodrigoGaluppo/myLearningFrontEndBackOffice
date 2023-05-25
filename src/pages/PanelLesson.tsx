@@ -128,7 +128,7 @@ export default function PanelLesson() {
       )
 
       toast({
-        title: 'Text Lesson deleted permanentlyt',
+        title: 'Text Lesson deleted permanently',
           description: "",
         status: 'success',
         duration: 9000,
@@ -180,7 +180,7 @@ export default function PanelLesson() {
       })
 
       toast({
-        title: 'Video Lesson deleted permanentlyt',
+        title: 'Video Lesson deleted permanently',
           description: "",
         status: 'success',
         duration: 9000,
@@ -224,7 +224,7 @@ export default function PanelLesson() {
       })
 
       toast({
-        title: 'Resource Lesson deleted permanentlyt',
+        title: 'Resource Lesson deleted permanently',
           description: "",
         status: 'success',
         duration: 9000,
@@ -355,7 +355,7 @@ export default function PanelLesson() {
                             onHandleDeleteTextLesson(TextLesson.id)
                           }} display={"flex"} disabled={!isDeletingEnableTextLesson} justifyContent={"space-between"} bg="red.400">
                             <span>
-                            Delete {TextLesson.id}
+                            Delete 
                             </span>
                             <BsTrash ></BsTrash>
                             

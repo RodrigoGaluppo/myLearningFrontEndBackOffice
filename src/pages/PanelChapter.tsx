@@ -1,5 +1,5 @@
 import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal, Checkbox } from "@chakra-ui/react";
-import { FaBook, FaImage, FaPlay, FaUser } from "react-icons/fa";
+import { FaBook, FaImage, FaPlay, FaTrash, FaUser } from "react-icons/fa";
 import SidebarWithHeader from "../components/SideBar";
 import CardModule from "../components/CardModule";
 import { useEffect, useState } from "react";
@@ -216,7 +216,7 @@ export default function PanelChapter() {
       )
 
       toast({
-        title: 'Text Lesson deleted permanentlyt',
+        title: 'Lesson deleted permanenlty',
           description: "",
         status: 'success',
         duration: 9000,
@@ -231,7 +231,7 @@ export default function PanelChapter() {
     }).catch(err=>{
 
       toast({
-        title: 'Could not delete Lesson text',
+        title: 'Could not delete Lesson ',
           description: "",
         status: 'error',
         duration: 9000,
@@ -386,18 +386,17 @@ const handleClickPrevious = ()=>{
                    Lessons?.map(Lesson=>(
                      <ListItem key={Lesson.id} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
                        
-                       <Flex alignItems={"center"} justifyContent={"space-between"}>
+                       <Flex w="100%" alignItems={"center"} justifyContent={"space-between"}>
                         <Link style={{width:"100%",height:"100%"}} to={`/Lesson/${Lesson.id}`}>       
                          <Text pl="4" fontSize={"large"}>{Lesson.title}  </Text> 
                          </Link>  
                          <Button onClick={()=>{
                             onHandleDeleteLesson(Lesson.id)
-                          }} display={"flex"} disabled={!isDeletingEnable} justifyContent={"space-between"} bg="red.400">
-                            <span>
-                            Delete {Lesson.id}
-                            </span>
-                            <BsTrash ></BsTrash>
+                          }} display={"flex"} p="4" alignItems={"center"} disabled={!isDeletingEnable} size="lg" justifyContent={"space-between"} bg="red.400">
                             
+                            Delete 
+                            
+                            <Icon ml="2"><FaTrash></FaTrash></Icon>
                           </Button>
                        </Flex>
                             

@@ -4,7 +4,8 @@ import api from "../services/apiClient"
 interface Iuser{
     id:string
     email:string,
-    name:string
+    name:string,
+    employeeRole:string
 }
 
 interface IAuthContext{
@@ -47,7 +48,8 @@ export const AuthProvider:React.FC<{children:React.ReactNode}> = ({children})=>{
             email,password
         })
         const {token,employee} = res.data
-        
+
+     
         localStorage.setItem("@myLearningEmployee:token",token)
         localStorage.setItem("@myLearningEmployee:employee",JSON.stringify(employee))
 

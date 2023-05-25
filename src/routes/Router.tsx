@@ -22,6 +22,9 @@ import PrivateRouteComponent from "./PrivateRoute";
 import PanelSubject from "../pages/PanelSubject";
 import PanelSUbjects from "../pages/PanelSubjects";
 import PanelChapter from "../pages/PanelChapter";
+import PanelCustomers from "../pages/PanelCustomers";
+import PanelCustomer from "../pages/PanelCustomer";
+import PanelEmployees from "../pages/PanelEmployees";
 
 
 
@@ -41,6 +44,10 @@ const Router:React.FC = ()=>{
                 <Route element={ <PrivateRoute component={PanelSubject}></PrivateRoute>} path="/Subject/:id" ></Route>
                 <Route element={ <PrivateRoute component={PanelChapter}></PrivateRoute>} path="/Chapter/:id" ></Route>
                 <Route element={ <PrivateRoute component={PanelLesson}></PrivateRoute>} path="/Lesson/:id" ></Route>
+                <Route element={ <PrivateRoute component={PanelCustomers}></PrivateRoute>} path="/customers" ></Route>
+                <Route element={ <PrivateRoute component={PanelCustomer}></PrivateRoute>} path="/customer/:id" ></Route>
+
+                <Route element={ <PrivateRoute component={PanelEmployees}></PrivateRoute>} path="/Employees" ></Route>
 
                 <Route element={ <PrivateRoute component={Panel}></PrivateRoute>} path="/panel" ></Route>
 

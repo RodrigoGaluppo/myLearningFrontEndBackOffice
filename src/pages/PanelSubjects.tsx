@@ -2,8 +2,8 @@ import { Box, Button, ButtonGroup,
   Center, Flex, FormControl, FormLabel, Grid, GridItem, Heading, Icon, IconButton, Input, 
   InputElementProps, Popover, PopoverArrow, PopoverCloseButton, PopoverContent, PopoverTrigger, Text,
   
-  SimpleGrid, Stack, useColorModeValue, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useToast, List, ListItem, Avatar, VStack, InputRightElement, InputRightAddon, InputGroup } from "@chakra-ui/react";
-import { FaBook, FaPlay, FaUser } from "react-icons/fa";
+  SimpleGrid, Stack, useColorModeValue, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useToast, List, ListItem, Avatar, VStack, InputRightElement, InputRightAddon, InputGroup, Checkbox, useBreakpointValue } from "@chakra-ui/react";
+import { FaBook, FaPlay, FaTrash, FaUser } from "react-icons/fa";
 
 import PanelGrid from "../components/PanelGrid";
 import SidebarWithHeader from "../components/SideBar";
@@ -15,6 +15,7 @@ import { useAuth } from "../hooks/AuthContext";
 import api from "../services/apiClient";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight, FiSearch } from "react-icons/fi";
+import VerifyPrompt from "../components/VerifyPrompt";
 
 interface ISubject {
   id:number;
@@ -112,9 +113,26 @@ export default function PanelSUbjects() {
 
   const {token} = useAuth()
 
+  const width100whenMobile = useBreakpointValue({
+    sm:"100%",
+    md:"",
+    lg:"",
+    base:"100%"
+  })
+
+  const MtWhenMobile = useBreakpointValue({
+    sm:"4",
+    md:"",
+    lg:"",
+    base:"4"
+  })
+
   const [subjects,setSubjects] = useState<ISubject[]>()
 
   const [isLoading,setIsLoading] = useState(false)
+
+  const [isDeletingEnable,setIsDeletingEnable] = useState(false)
+  const verifyPrompt = useDisclosure()
 
   const toast = useToast()
 
@@ -138,6 +156,43 @@ export default function PanelSUbjects() {
        })
   }
   },[])
+
+  const onHandleDeleteSubject=(subjectId:number)=>{
+
+    setIsLoading(true)
+
+    api.delete(`subject/${subjectId}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+      
+      const newSubjects = subjects?.filter(
+        txtL=>(txtL.id != subjectId)
+      )
+
+      toast({
+        title: 'Subject deleted permanenlty',
+        description: "",
+        status: 'success',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+
+      setSubjects(newSubjects)
+
+      setIsLoading(false)
+      
+    }).catch(err=>{
+
+      toast({
+        title: 'Could not delete Subject ',
+          description: "",
+        status: 'error',
+        duration: 9000,
+        isClosable: true,
+        position:"top-left"
+      })
+      setIsLoading(false)
+    })
+  }
 
   // method to make sure page always start at 1
   useEffect(()=>{
@@ -181,9 +236,8 @@ export default function PanelSUbjects() {
 
     let page = Number(searchParams.get("page"))
     let search = String(searchParams.get("search"))
+  
     
-   
-
     if(page >= maxPage)
       {
         toast({
@@ -252,6 +306,11 @@ const handleClickPrevious = ()=>{
     <SidebarWithHeader>
       <PanelGrid/>
       <Loader isLoading={isLoading}/>
+
+      <VerifyPrompt onClose={verifyPrompt.onClose} onOpen={verifyPrompt.onOpen} isOpen={verifyPrompt.isOpen} >
+            <Button color={"red.400"} onClick={verifyPrompt.onClose} >Ok</Button>          
+        </VerifyPrompt>
+
       <ModalCreateSubject isOpen={isOpen} onClose={onClose} />
       <Center mt="10" textAlign={"center"} >
         <Heading mr="4" >Subjects</Heading>
@@ -259,10 +318,10 @@ const handleClickPrevious = ()=>{
       </Center>
 
       <VStack maxW="3xl" margin={"0 auto"}>
-      <Flex w="100%" justifyContent={"space-between"}  >
-        <Button onClick={onOpen} colorScheme="pink" >Create a Subject</Button>
+      <Flex flexWrap={"wrap"} w="100%" justifyContent={"space-between"}  >
+        <Button w={width100whenMobile} onClick={onOpen} colorScheme="pink" >Create a Subject</Button>
         
-        <Box>
+        <Box w={width100whenMobile} mt={MtWhenMobile}>
         <InputGroup w="100%">
         <Input onChangeCapture={(e)=>{
 
@@ -278,20 +337,41 @@ const handleClickPrevious = ()=>{
           </InputRightElement>
 
         </InputGroup>
+        <Checkbox mt="4" onChange={(e)=>{
+              setIsDeletingEnable(e.target.checked)
+
+              if(e.target.checked){
+                verifyPrompt.onOpen()
+              }
+
+            }}>
+              Enable Delete
+          </Checkbox>
         </Box>
+        
         
       </Flex>
       <List   w="100%" mb="4" pb="4" spacing={3} maxH="400px" overflowY={"auto"} >
                        
               {
                 subjects?.map(subject=>(
-                  <ListItem key={subject.id} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
-                  <Link style={{width:"100%",height:"100%"}} to={`/subject/${subject.id}`}>          
-                    <Flex>
-                      <Text fontSize={"large"}>{subject.name}  </Text> 
-                    </Flex>
-                  </Link>          
-              </ListItem>
+                  <ListItem key={subject.id} flexWrap={"wrap"} bg={"gray.700"} display="flex" alignItems={"center"} borderRadius={"xl"}  px="4" py="6"  >
+                       
+                       <Flex w="100%" alignItems={"center"} flexWrap={"wrap"} justifyContent={"space-between"}>
+                        <Link  style={{width:width100whenMobile,height:"100%"}} to={`/subject/${subject.id}`}>       
+                         <Text pl="4" fontSize={"large"}>{subject.name}  </Text> 
+                         </Link>  
+                         <Button mt={MtWhenMobile} onClick={()=>{
+                            onHandleDeleteSubject(subject.id)
+                          }} display={"flex"} p="4" alignItems={"center"} disabled={!isDeletingEnable} size="lg" justifyContent={"space-between"} bg="red.400">
+                            
+                            Delete 
+                            
+                            <Icon ml="2"><FaTrash></FaTrash></Icon>
+                          </Button>
+                       </Flex>
+                            
+                 </ListItem>
                 ))
               }
                 {subjects?.length == 0 && <Text mt="4" textAlign={"center"} fontSize={"md"}>There are no subjects</Text>}
