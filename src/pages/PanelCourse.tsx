@@ -1,4 +1,4 @@
-import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal, VStack, Checkbox } from "@chakra-ui/react";
+import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal, VStack, Checkbox, Switch } from "@chakra-ui/react";
 import SidebarWithHeader from "../components/SideBar";
 import { LegacyRef, useEffect, useRef, useState } from "react";
 import api from "../services/apiClient";
@@ -120,6 +120,8 @@ export default function PanelSubject() {
 
   const verifyPrompt = useDisclosure()
 
+  const [isActive, setIsActive] = useState(false)
+                
 
   // method to update courses image
 
@@ -152,7 +154,7 @@ export default function PanelSubject() {
     }}).then((res)=>{
        
       setCourse(res.data)
-     
+  
       setIsLoading(false)
 
       toast({
@@ -188,6 +190,7 @@ export default function PanelSubject() {
        
       setCourse(res.data)
      
+ 
       setIsLoading(false)
 
       toast({
@@ -213,6 +216,40 @@ export default function PanelSubject() {
 
   }
 
+  const onHandleChnageActiveStatus= (e:React.ChangeEvent<HTMLInputElement>)=>{
+
+    
+    setIsLoading(true)
+    api.put("course/active/"+id,{
+        active:e.target.checked
+    },{ 
+        headers: {"Authorization" : `Bearer ${token}`}
+    }).then((res)=>{
+       
+        setIsActive(res.data?.active)
+        setCourse(res.data)
+      
+        toast({
+            title: 'success',
+            description: "customer was successfully updated",
+            status: 'success',
+            duration: 9000,
+            isClosable: true, position:"top-left"
+          })
+         
+        setIsLoading(false)
+    }).catch(err=>{
+        toast({
+            title: 'error',
+            description: "could not update customer info",
+            status: 'error',
+            duration: 9000,
+            isClosable: true, position:"top-left"
+          })
+        setIsLoading(false)
+    })
+  }
+
   // method to load course info
   useEffect(()=>{
 
@@ -220,7 +257,7 @@ export default function PanelSubject() {
     api.get(`course/${id}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
        
       setCourse(res.data)
-     
+      setIsActive(res.data?.active)
       setIsLoading(false)
     
 
@@ -413,6 +450,14 @@ const handleClickPrevious = ()=>{
               <Heading textAlign={"center"} w="100%">
                 Course Info
               </Heading>
+
+              <Flex >
+                  <Text>active: </Text>
+                  <Switch isChecked={isActive} onChange={e=>{
+                      onHandleChnageActiveStatus(e)
+                  }} colorScheme="pink" size={"md"} ml="2" />
+                </Flex>
+
                 <form onSubmit={onHandleUpdateCourseImage}>
                   <FormLabel>
                     Image:

@@ -17,10 +17,8 @@ import {
     Image,
     Center
   } from '@chakra-ui/react';
-import { Link, redirect } from 'react-router-dom';
 import { ColorModeSwitcher } from '../components/ColorModeSwitcher';
 import { useToast } from '@chakra-ui/react'
-import Header from '../components/Header';
 import { useState } from 'react';
 import { useAuth } from '../hooks/AuthContext';
 
@@ -86,6 +84,7 @@ import { useAuth } from '../hooks/AuthContext';
         
         <Flex pt="6" w="100%" justifyContent={"center"} alignItems={"center"}>
           <Center>
+           
           <Stack 
             bg={useColorModeValue('gray.100', 'gray.700')}
             rounded={'xl'}
@@ -152,8 +151,10 @@ import { useAuth } from '../hooks/AuthContext';
                 }} />
               
             </Box>
-            form
+            <ColorModeSwitcher mt="2" w="100%"></ColorModeSwitcher>
+
           </Stack>
+
           </Center>
         </Flex>
 

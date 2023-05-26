@@ -34,7 +34,7 @@ const genders:IGender[] = [
 
 export default function PanelEmployee() {
   
-  const {token} = useAuth()
+  const {token,user} = useAuth()
 
   const [employee, setEmployee] = useState<IEmployee>()
   const [isActive, setIsActive] = useState(false)
@@ -272,6 +272,7 @@ export default function PanelEmployee() {
                         <FormControl isRequired>
                         <FormLabel>E-mail</FormLabel>
                         <Input
+                        disabled={employee?.email == user.email}
                         onChange={(e)=>{
                             setEmployee({name:employee?.name,  email:e.target.value, birthDate: employee?.birthDate , gender:employee?.gender, employeeRole:employee?.employeeRole})
                         }}
