@@ -25,6 +25,7 @@ import PanelChapter from "../pages/PanelChapter";
 import PanelCustomers from "../pages/PanelCustomers";
 import PanelCustomer from "../pages/PanelCustomer";
 import PanelEmployees from "../pages/PanelEmployees";
+import PanelEmployee from "../pages/PanelEmployee";
 
 
 
@@ -46,6 +47,7 @@ const Router:React.FC = ()=>{
                 <Route element={ <PrivateRoute component={PanelLesson}></PrivateRoute>} path="/Lesson/:id" ></Route>
                 <Route element={ <PrivateRoute component={PanelCustomers}></PrivateRoute>} path="/customers" ></Route>
                 <Route element={ <PrivateRoute component={PanelCustomer}></PrivateRoute>} path="/customer/:id" ></Route>
+                <Route element={ <PrivateRoute component={PanelEmployee}></PrivateRoute>} path="/employee/:id" ></Route>
 
                 <Route element={ <PrivateRoute component={PanelEmployees}></PrivateRoute>} path="/Employees" ></Route>
 

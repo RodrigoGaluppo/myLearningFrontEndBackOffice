@@ -1,5 +1,5 @@
 import { Center, Flex, Grid, GridItem,Textarea,Text, Heading, Icon,Image, SimpleGrid, useColorModeValue, Stack, Input, ButtonGroup, Button, IconButton, Box, useBreakpointValue, FormControl, useTab, useToast, useDisclosure, List, ListItem, Container, InputGroup, InputRightElement, InputRightAddon, ModalOverlay, ModalContent, FormLabel, ModalBody, ModalHeader, ModalCloseButton, ModalFooter, Modal, Checkbox, Avatar } from "@chakra-ui/react";
-import { FaBook, FaImage, FaPlay, FaTrash, FaUser } from "react-icons/fa";
+import { FaBan, FaBook, FaImage, FaPlay, FaTrash, FaUser } from "react-icons/fa";
 import SidebarWithHeader from "../components/SideBar";
 import CardModule from "../components/CardModule";
 import { useEffect, useState } from "react";
@@ -13,7 +13,7 @@ import { log } from "console";
 import ModalCreateEmployee from "../components/ModalCreateEmployee";
 
 interface IEmployee{
-  id:number;
+  id:string;
   email:string
 
 }
@@ -21,7 +21,7 @@ interface IEmployee{
 
 export default function PanelEmployees() {
   
-  const {token} = useAuth()
+  const {token,user} = useAuth()
   const [isLoading,setIsLoading] = useState(false)
 
   const toast = useToast()
@@ -72,11 +72,11 @@ export default function PanelEmployees() {
   }
   },[])
 
-  const onHanldeDeleteemployee = (employeeId:number)=>{
+  const onHanldeDeleteemployee = (employeeId:string)=>{
 
     setIsLoading(true)
 
-    api.delete(`employee/${employeeId}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
+    api.delete(`${employeeId}`,{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
       
       const newTextemployees = employees?.filter(
         txtL=>(txtL.id != employeeId)
@@ -275,14 +275,24 @@ const handleClickPrevious = ()=>{
                           <Text  pl="4" fontSize={"large"}>{employee.email}  </Text> 
                         </Flex>
                       </Link>  
+                      {
+                      
+                      employee.id !== user.id ? 
                       <Button ml="2" mt={MtWhenMobile} onClick={()=>{
-                          onHanldeDeleteemployee(employee.id)
-                        }} display={"flex"} p="4" alignItems={"center"} disabled={!isDeletingEnable} size="lg" justifyContent={"space-between"} bg="red.400">
-                          
-                          Delete 
-                          
-                          <Icon ml="2"><FaTrash></FaTrash></Icon>
-                        </Button>
+                        onHanldeDeleteemployee(employee.id)
+                      }} display={"flex"} p="4" alignItems={"center"} disabled={!isDeletingEnable} size="lg" justifyContent={"space-between"} bg="red.400">
+                        
+                        Delete 
+                        
+                        <Icon ml="2"><FaTrash></FaTrash></Icon>
+                      </Button>
+                      :
+                      <Button ml="2" mt={MtWhenMobile} display={"flex"} p="4" alignItems={"center"} disabled size="lg" justifyContent={"space-between"} bg="red.300">
+                        <Icon ml="2"><FaBan/></Icon>
+                      </Button>
+                      
+                      
+                      } 
                     </Flex>       
                     </ListItem>
                    ))
