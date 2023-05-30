@@ -16,8 +16,33 @@ export default function Panel() {
 
   const [dataGenderCount,setDataGenderCount] = useState<number[]>([])
 
+  const [accomplishedLessonsCOunt,setAccomplishedLessonsCOunt] = useState<number[]>([])
+
+  const [accomplishedLessonsCOuntByHour,setAccomplishedLessonsCOuntByHour] = useState<number[]>([])
+
+
   const [dataEmployeeGenderCount,setDataEmployeeGenderCount] = useState<number[]>([])
 
+  const Months = [
+   "January",
+   "February",
+   "March",
+   "April",
+   "May",
+   "June",
+   "July",
+   "August",
+   "September",
+     "October",
+     "November",
+     "December"
+  ];
+
+  const Hours = [
+    "0","1","2","3","4","5","6","7","8","9","10","11","12",
+    "13","14","15","16","17","18","19","20","21","22","23"
+   ];
+ 
 
   useEffect(()=>{
 
@@ -30,6 +55,10 @@ export default function Panel() {
       setDataEmployeeGenderCount(res.data?.genderPercentagesEmployees?.map((f:any)=>{
         return f?.percentage
       }))
+
+      setAccomplishedLessonsCOunt(Object.values(res.data?.accomplishedLessonsByMonth))
+
+      setAccomplishedLessonsCOuntByHour(Object.values(res.data?.accomplishedLessonsByHour))
     })
     .catch(()=>{
 
@@ -45,6 +74,19 @@ export default function Panel() {
       />
       <SimpleGrid color="white" my="10" columns={{sm:1,md:2}} spacing="6" >
 
+       <Flex minH="300px" maxH="400px" >
+        <LineChart
+          labels={Hours}
+          data={accomplishedLessonsCOuntByHour}
+        />
+        </Flex>
+        <Flex minH="300px" maxH="400px" >
+        <LineChart
+          labels={Months}
+          data={accomplishedLessonsCOunt}
+        />
+        </Flex>
+
         <Center flexWrap={"wrap"} maxH="400px" >
           <Text mb="2" textAlign={"center"} w="100%">Customer Genders</Text>
           <PieChart
@@ -53,14 +95,6 @@ export default function Panel() {
           />
         </Center>
 
-        <Flex minH="300px" maxH="400px" >
-        <LineChart/>
-        </Flex>
-
-        <Flex minH="300px" maxH="400px" >
-        <LineChart/>
-        </Flex>
-       
         <Center flexWrap={"wrap"} maxH="400px" >
           <Text mb="2" textAlign={"center"} w="100%">Employee Genders</Text>
           <PieChart
@@ -68,6 +102,11 @@ export default function Panel() {
             data={dataEmployeeGenderCount}
           />
         </Center>
+
+
+     
+       
+        
 
       </SimpleGrid>
     </SidebarWithHeader>
