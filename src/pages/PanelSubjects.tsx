@@ -1,16 +1,14 @@
 import { Box, Button, ButtonGroup, 
-  Center, Flex, FormControl, FormLabel, Grid, GridItem, Heading, Icon, IconButton, Input, 
-  InputElementProps, Popover, PopoverArrow, PopoverCloseButton, PopoverContent, PopoverTrigger, Text,
-  
-  SimpleGrid, Stack, useColorModeValue, useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useToast, List, ListItem, Avatar, VStack, InputRightElement, InputRightAddon, InputGroup, Checkbox, useBreakpointValue } from "@chakra-ui/react";
-import { FaBook, FaPlay, FaTrash, FaUser } from "react-icons/fa";
+  Center, Flex, FormControl, FormLabel, Heading, Icon, Input,Text,
+ useDisclosure, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useToast, List, ListItem, Avatar, VStack, InputRightElement, InputRightAddon, InputGroup, Checkbox, useBreakpointValue } from "@chakra-ui/react";
+import { FaTrash} from "react-icons/fa";
 
-import PanelGrid from "../components/PanelGrid";
+
 import SidebarWithHeader from "../components/SideBar";
 
 import Loader from '../components/Loader';
-import React, { ElementRef, ReactText, useEffect, useState } from "react";
-import  FocusLock from "react-focus-lock"
+import { useEffect, useState } from "react";
+
 import { useAuth } from "../hooks/AuthContext";
 import api from "../services/apiClient";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
@@ -304,7 +302,6 @@ const handleClickPrevious = ()=>{
   return (
     <>
     <SidebarWithHeader>
-      <PanelGrid/>
       <Loader isLoading={isLoading}/>
 
       <VerifyPrompt onClose={verifyPrompt.onClose} onOpen={verifyPrompt.onOpen} isOpen={verifyPrompt.isOpen} >
@@ -312,6 +309,7 @@ const handleClickPrevious = ()=>{
         </VerifyPrompt>
 
       <ModalCreateSubject isOpen={isOpen} onClose={onClose} />
+
       <Center mt="10" textAlign={"center"} >
         <Heading mr="4" >Subjects</Heading>
         

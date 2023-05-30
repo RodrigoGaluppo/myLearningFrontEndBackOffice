@@ -1,35 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const data = {
-  
-  labels: ['16','17','18'],
-  datasets: [
-    {
-      label: '# of Votes',
-      data: [30,20,50],
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)'
-     
-      ],
-      borderWidth: 1,
-    },
-  ],
-};
 
-export default function PieChart(){
+
+export default function PieChart({data,label}:{data:number[], label:string[]}){
+  const colors = ['#FC8181', '#68D391', '#4FD1C5', '#B794F4', '#F6E05E', '#F687B3',
+"#322659", "#521B41", "#065666", "#1A365D", "#1D4044", "#1C4532", "#5F370E", "#63171B"];
+  
   return (
-    <Pie data={data}/>
+    <Pie 
+    style={{color:"white"}}
+    data={
+
+      {
+  
+        labels: label,
+        datasets: [
+          {
+            label: '#',
+            data: data,
+            backgroundColor: [
+              'rgb(255, 99, 132)',
+              'rgb(53, 162, 235)',
+              'rgb(245, 231, 66)'
+            ],
+            
+            borderWidth: 1,
+          },
+        ],
+      }
+
+    }/>
   )
 }

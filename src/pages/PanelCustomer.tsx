@@ -329,6 +329,7 @@ export default function PanelCustomer() {
                         <FormControl isRequired>
                         <FormLabel>E-mail</FormLabel>
                         <Input
+                        disabled
                         onChange={(e)=>{
                             setCustomer({firstName:customer?.firstName,  email:e.target.value, birthDate: customer?.birthDate , gender:customer?.gender, username:customer?.username, lastName:customer?.lastName})
                         }}

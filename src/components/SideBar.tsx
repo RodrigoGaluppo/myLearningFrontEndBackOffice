@@ -49,7 +49,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', icon: FiTrendingUp, link:"/panel/" },
   { name: 'Subjects', icon:FaBook, link:"/Subjects/" },
   { name: 'Customers', icon:FaBook, link:"/Customers/" },
-  { name: 'Settings', icon: FiSettings, link:"/settings/" },
+
 ];
 
 const LinkItemsAdmin: Array<LinkItemProps> = [
@@ -57,7 +57,7 @@ const LinkItemsAdmin: Array<LinkItemProps> = [
   { name: 'Subjects', icon:FaBook, link:"/Subjects/" },
   { name: 'Customers', icon:FaUser, link:"/Customers/" },
   { name: 'Employees', icon:FaPersonBooth, link:"/Employees/" },
-  { name: 'Settings', icon: FiSettings, link:"/settings/" },
+
 ];
 
 export default function SidebarWithHeader({
