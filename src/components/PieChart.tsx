@@ -5,7 +5,6 @@ import { Pie } from 'react-chartjs-2';
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 
-
 export default function PieChart({data,label}:{data:number[], label:string[]}){
   const colors = ['#FC8181', '#68D391', '#4FD1C5', '#B794F4', '#F6E05E', '#F687B3',
 "#322659", "#521B41", "#065666", "#1A365D", "#1D4044", "#1C4532", "#5F370E", "#63171B"];

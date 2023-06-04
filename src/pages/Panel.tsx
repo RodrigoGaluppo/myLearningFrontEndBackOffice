@@ -1,4 +1,4 @@
-import { Center, Flex, Grid, GridItem, Heading, Icon, SimpleGrid, useColorModeValue,Text } from "@chakra-ui/react";
+import { Center, Flex, Grid, GridItem, Heading, Icon, SimpleGrid, useColorModeValue,Text, Box } from "@chakra-ui/react";
 import { FaBook, FaPlay, FaUser } from "react-icons/fa";
 import PieChart from "../components/PieChart";
 import LineChart from "../components/LineChart";
@@ -7,6 +7,7 @@ import SidebarWithHeader from "../components/SideBar";
 import { useEffect, useState } from "react";
 import api from "../services/apiClient";
 import { useAuth } from "../hooks/AuthContext";
+import BarChart from "../components/BarChart";
 
 
 export default function Panel() {
@@ -20,6 +21,11 @@ export default function Panel() {
 
   const [accomplishedLessonsCOuntByHour,setAccomplishedLessonsCOuntByHour] = useState<number[]>([])
 
+  const [employeeRoles,setEmployeeRoles] = useState<string[]>([])
+  const [employeeRolesPercentage,setEmployeeRolesPercentage] = useState<number[]>([])
+
+  const [topCourses,setTopCourses] = useState<string[]>([])
+  const [topCoursesCount,setTopCoursesCount] = useState<number[]>([])
 
   const [dataEmployeeGenderCount,setDataEmployeeGenderCount] = useState<number[]>([])
 
@@ -48,6 +54,7 @@ export default function Panel() {
 
     api.get("panel")
     .then((res)=>{
+
       setDataGenderCount(res.data?.genderPercentages?.map((f:any)=>{
         return f?.percentage
       }))
@@ -59,6 +66,14 @@ export default function Panel() {
       setAccomplishedLessonsCOunt(Object.values(res.data?.accomplishedLessonsByMonth))
 
       setAccomplishedLessonsCOuntByHour(Object.values(res.data?.accomplishedLessonsByHour))
+
+      setEmployeeRoles(res.data?.rolePercentageEmployee?.map((item:any) => item.role))
+      setEmployeeRolesPercentage(res.data?.rolePercentageEmployee?.map((item:any) => item.percentage))
+
+
+      setTopCourses(res.data?.topCourses?.map((item:any) => item.courseName))
+      setTopCoursesCount(res.data?.topCourses?.map((item:any) => item.enrollmentCount))
+      
     })
     .catch(()=>{
 
@@ -72,41 +87,68 @@ export default function Panel() {
       <PanelGrid
       
       />
-      <SimpleGrid color="white" my="10" columns={{sm:1,md:2}} spacing="6" >
+      <SimpleGrid color="white" my="10" columns={1} spacing="6" >
 
-       <Flex minH="300px" maxH="400px" >
-        <LineChart
-          labels={Hours}
-          data={accomplishedLessonsCOuntByHour}
-        />
-        </Flex>
-        <Flex minH="300px" maxH="400px" >
-        <LineChart
-          labels={Months}
-          data={accomplishedLessonsCOunt}
-        />
-        </Flex>
+      {
+        user.employeeRole.toLowerCase() == "admin" && 
+        (
 
-        <Center flexWrap={"wrap"} maxH="400px" >
-          <Text mb="2" textAlign={"center"} w="100%">Customer Genders</Text>
-          <PieChart
-            label={["M","F","O"]}
-            data={dataGenderCount}
-          />
-        </Center>
-
-        <Center flexWrap={"wrap"} maxH="400px" >
+          <Flex flexWrap={"wrap"}>
+      <Heading w="100%" textAlign={"center"}>Employees Statistics</Heading>
+      <Center w={{"sm":"100%","md":"50%","lg":"50%"}} my="10" flexWrap={"wrap"} maxH="400px" >
           <Text mb="2" textAlign={"center"} w="100%">Employee Genders</Text>
           <PieChart
             label={["M","F","O"]}
             data={dataEmployeeGenderCount}
           />
+        </Center >
+
+        <Center w={{"sm":"100%","md":"50%","lg":"50%"}} my="10"  flexWrap={"wrap"} maxH="400px" >
+          <Text mb="2" textAlign={"center"} w="100%">Employee Roles</Text>
+          <PieChart
+            label={employeeRoles}
+            data={employeeRolesPercentage}
+          />
+        </Center>
+      </Flex>
+        )
+      }
+      
+      
+      <Flex flexWrap={"wrap"}>
+      <Heading w="100%" textAlign={"center"}>Customer and Course Statistics</Heading>
+      <Center w={{"sm":"100%","md":"50%","lg":"50%"}} my="5"  flexWrap={"wrap"} >
+        <Text mb="2" textAlign={"center"} w="100%">Accomplished Lessons by hour of the day</Text>
+          <LineChart
+            labels={Hours}
+            data={accomplishedLessonsCOuntByHour}
+          />
+        </Center>
+        <Center w={{"sm":"100%","md":"50%","lg":"50%"}} my="5"  flexWrap={"wrap"} >
+        <Text mb="2" textAlign={"center"} w="100%">Accomplished Lessons by month of the year</Text>
+        <LineChart
+          
+          labels={Months}
+          data={accomplishedLessonsCOunt}
+        />
         </Center>
 
+        <Center w={{"sm":"100%","md":"50%","lg":"50%"}} flexWrap={"wrap"} maxH="400px" my="5" >
+          <Text mb="2" textAlign={"center"} w="100%">Customer Genders</Text>
+          <PieChart
+            label={["M","F","O"]} 
+            data={dataGenderCount}
+          />
+        </Center>
 
-     
-       
-        
+        <Center w={{"sm":"100%","md":"50%","lg":"50%"}} flexWrap={"wrap"} maxH="400px" my="5" >
+          <Text mb="2" textAlign={"center"} w="100%">Top 5 courses by subscriptions</Text>
+          <BarChart
+            labels={topCourses}
+            data={topCoursesCount}
+          />
+        </Center>
+      </Flex>
 
       </SimpleGrid>
     </SidebarWithHeader>
