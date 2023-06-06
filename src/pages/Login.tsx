@@ -21,17 +21,20 @@ import { ColorModeSwitcher } from '../components/ColorModeSwitcher';
 import { useToast } from '@chakra-ui/react'
 import { useState } from 'react';
 import { useAuth } from '../hooks/AuthContext';
+import Loader from '../components/Loader';
 
   
   export default function JoinsUs() {
 
     const [email,setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [isLoading, setIsLoading] = useState(false)
     const {signIn} = useAuth()
    
     const toast = useToast()
 
     const onHandleSubmit = async (e:any)=>{
+      setIsLoading(true)
       
       e.preventDefault()
 
@@ -49,7 +52,6 @@ import { useAuth } from '../hooks/AuthContext';
       }
 
       
-
       signIn({email,password})
       .then(res=>{
         toast({
@@ -60,18 +62,32 @@ import { useAuth } from '../hooks/AuthContext';
           isClosable: true, position:"top-left"
         })
         window.location.replace('/panel');
+        setIsLoading(false)
       })
       .catch((err)=>{
         console.log(err);
         
-        toast({
-          title: 'Invalid fields',
-          description: err.response.data.message,
-          status: 'error',
-          duration: 9000,
-          isClosable: true,
-          position:"top-left"
-        })
+        try{
+          toast({
+            title: 'Invalid fields',
+            description: err.response.data.message,
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+            position:"top-left"
+          })
+        }catch{
+          toast({
+            title: 'network error',
+            description: "could not contact the server",
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+            position:"top-left"
+          })
+        }
+
+        setIsLoading(false)
       })
 
 
@@ -81,7 +97,7 @@ import { useAuth } from '../hooks/AuthContext';
       
       <Box  w="100%">
        
-        
+        <Loader isLoading={isLoading} />
         <Flex pt="6" w="100%" justifyContent={"center"} alignItems={"center"}>
           <Center>
            

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import {
   Box,
   Flex,
@@ -18,6 +18,7 @@ import {
   Container,
   Image,
   Text,
+  useColorMode,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { Link as LinkRoute } from 'react-router-dom';
@@ -51,8 +52,12 @@ const NavLink = ({ children, href="#" }: { children: ReactNode, href:string }) =
 
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
- 
+  const {setColorMode } = useColorMode()
   const {signOut,user} = useAuth()
+
+  useEffect(()=>{
+    setColorMode("dark")
+  },[])
 
   return (
     <>

@@ -74,7 +74,14 @@ export default function PanelLesson() {
       
     },{ headers: {"Authorization" : `Bearer ${token}`}}).then((res)=>{
        
-      setLesson(res.data)
+      setLesson({
+        id:Lesson?.id,
+        title:res.data?.title,
+        description: res.data?.description,
+        resourceLessons:Lesson?.resourceLessons,
+        videolessons:Lesson?.videolessons,
+        textLessons:Lesson?.textLessons
+      })
      
       setIsLoading(false)
 

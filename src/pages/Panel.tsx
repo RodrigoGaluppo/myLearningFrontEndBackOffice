@@ -19,6 +19,10 @@ export default function Panel() {
 
   const [accomplishedLessonsCOunt,setAccomplishedLessonsCOunt] = useState<number[]>([])
 
+  const [studentsCount,setStudentsCount] = useState<number>(0)
+  const [lessonsCount,setLessonsCount] = useState<number>(0)
+  const [coursesCount,setCoursesCount] = useState<number>(0)
+
   const [accomplishedLessonsCOuntByHour,setAccomplishedLessonsCOuntByHour] = useState<number[]>([])
 
   const [employeeRoles,setEmployeeRoles] = useState<string[]>([])
@@ -52,7 +56,7 @@ export default function Panel() {
 
   useEffect(()=>{
 
-    api.get("panel")
+    api.get("panel",{ headers: {"Authorization" : `Bearer ${token}`}})
     .then((res)=>{
 
       setDataGenderCount(res.data?.genderPercentages?.map((f:any)=>{
@@ -70,6 +74,9 @@ export default function Panel() {
       setEmployeeRoles(res.data?.rolePercentageEmployee?.map((item:any) => item.role))
       setEmployeeRolesPercentage(res.data?.rolePercentageEmployee?.map((item:any) => item.percentage))
 
+      setLessonsCount(res.data?.lessonsCount)
+      setStudentsCount(res.data?.customersCount)
+      setCoursesCount(res.data?.coursesCount)
 
       setTopCourses(res.data?.topCourses?.map((item:any) => item.courseName))
       setTopCoursesCount(res.data?.topCourses?.map((item:any) => item.enrollmentCount))
@@ -85,7 +92,9 @@ export default function Panel() {
     <>
     <SidebarWithHeader>
       <PanelGrid
-      
+      classesCount={lessonsCount}
+      coursesCount={coursesCount}
+      studentsCount={studentsCount}
       />
       <SimpleGrid color="white" my="10" columns={1} spacing="6" >
 

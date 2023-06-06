@@ -1,7 +1,7 @@
 import { Center, Heading, Icon, SimpleGrid, Stat, StatArrow, StatGroup, StatHelpText, StatLabel, StatNumber, useColorModeValue } from "@chakra-ui/react";
 import { FaBook, FaPlay, FaUser } from "react-icons/fa";
 
-export default function PanelGrid() {
+export default function PanelGrid({studentsCount,coursesCount,classesCount }:{studentsCount:number, coursesCount:number, classesCount:number}) {
  
 
   return (
@@ -14,13 +14,10 @@ export default function PanelGrid() {
           
           <StatGroup  >
             <Stat w="100%" >
-                <StatLabel fontSize={"3xl"} >Students 499 <Icon as={FaUser} ml="2" fontSize={"2xl"} /> 
+                <StatLabel fontSize={"3xl"} > {studentsCount} Students <Icon as={FaUser} ml="2" fontSize={"2xl"} /> 
                 </StatLabel>
                 
-                <StatHelpText>
-                <StatArrow type="increase" />
-                10%
-                </StatHelpText>
+               
             </Stat>
             </StatGroup>
           
@@ -29,7 +26,7 @@ export default function PanelGrid() {
           bg={useColorModeValue("pink.200","gray.900")}
           p="4" py="10"
         >
-          <Heading fontSize={"3xl"} >3 Courses</Heading>
+          <Heading fontSize={"3xl"} >{coursesCount} Courses</Heading>
           <Icon as={FaBook} ml="2" fontSize={"2xl"} /> 
           
         </Center>
@@ -38,7 +35,7 @@ export default function PanelGrid() {
           p="4" py="6"
         >
             
-            <Heading fontSize={"3xl"} >500 Classes </Heading>
+            <Heading fontSize={"3xl"} >{classesCount} Classes </Heading>
             <Icon as={FaPlay} ml="2" fontSize={"2xl"} /> 
           
         </Center>

@@ -36,7 +36,7 @@ import {
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { FaBook, FaLine, FaPersonBooth, FaUser } from 'react-icons/fa';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
+
 import { useAuth } from '../hooks/AuthContext';
 
 interface LinkItemProps {
@@ -140,9 +140,6 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         ))
       }
 
-      <NavItem key={"change-color-mode"} icon={FaLine}>
-        <ColorModeSwitcher/>
-      </NavItem>
     </Box>
   );
 };
