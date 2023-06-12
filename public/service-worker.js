@@ -1,8 +1,8 @@
 // service-worker.js
 
 // Define the cache names
-const CACHE_NAME = 'my-app-cache-v1';
-const DATA_CACHE_NAME = 'my-app-data-cache-v1';
+const CACHE_NAME = 'mylearningbackoffice-cache-v1';
+const DATA_CACHE_NAME = 'mylearningbackoffice-data-cache-v1';
 
 // List the files to be cached
 const urlsToCache = [
