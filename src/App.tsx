@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react"
+import AppProvider from "./hooks"
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import {
+  ChakraProvider,
+  ColorModeProvider
+} from "@chakra-ui/react"
+
+import { extendTheme } from '@chakra-ui/react'
+import Router from "./routes/Router"
+
+
+// 2. Add your color mode config
+const config = {
+  initialColorMode: 'dark',
+  useSystemColorMode: false,
 }
 
-export default App;
+// 3. extend the theme
+const theme = extendTheme({ config })
+
+
+export const App = () => (
+  <AppProvider>
+     <ChakraProvider  theme={theme}>
+    
+      <Router></Router>
+     
+     
+    </ChakraProvider>
+  </AppProvider>
+ 
+)
