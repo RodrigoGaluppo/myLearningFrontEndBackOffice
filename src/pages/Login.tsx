@@ -167,8 +167,7 @@ import Loader from '../components/Loader';
                 }} />
               
             </Box>
-            <ColorModeSwitcher mt="2" w="100%"></ColorModeSwitcher>
-
+     
           </Stack>
 
           </Center>
