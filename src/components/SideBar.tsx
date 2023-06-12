@@ -119,6 +119,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             <Link to="/" >
             <Image w="100%" maxH={"80px"} objectFit={"contain"} src={useColorModeValue('/Images/logo-white.svg', '/Images/logo-dark.svg')}/>
             </Link>
+            
         </Box>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
