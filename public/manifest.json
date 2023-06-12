@@ -1,8 +1,8 @@
 {
   "name": "MyLearningBackOffice",
   "short_name": "MyLearningBackOffice",
-  "theme_color": "#323232",
-  "background_color": "#323232",
+  "theme_color": "#1A202C",
+  "background_color": "#1A202C",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
