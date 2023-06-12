@@ -75,7 +75,7 @@ export default function Header() {
           <HStack spacing={8} alignItems={'center'}>
             <Box w="100%" >
                   <LinkRoute to="/" >
-                  <Image w="100%" maxH={"80px"} objectFit={"contain"} src={useColorModeValue('../img/logo-white.svg', '../img/logo-dark.svg')}/>
+                  <Image w="100%" maxH={"80px"} objectFit={"contain"} src={useColorModeValue('../Images/logo-white.svg', '../Images/logo-dark.svg')}/>
                   </LinkRoute>
             </Box>
             <HStack
