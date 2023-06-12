@@ -236,7 +236,7 @@ import { useAuth } from '../hooks/AuthContext';
                     Username:
                     </Text>
                     <Input
-                    placeholder="firstname"
+                    placeholder="Username"
                     bg={'gray.100'}
                     border={0}
                     type='tezt'
@@ -311,7 +311,7 @@ import { useAuth } from '../hooks/AuthContext';
                     Password:
                     </Text>
                     <Input
-                    placeholder="firstname@lastname.io"
+                    placeholder=""
                     bg={'gray.100'}
                     border={0}
                     type='password'
@@ -329,7 +329,7 @@ import { useAuth } from '../hooks/AuthContext';
                     Password Confirmation:
                     </Text>
                     <Input
-                    placeholder="firstname@lastname.io"
+                    placeholder=""
                     bg={'gray.100'}
                     border={0}
                     type='password'
