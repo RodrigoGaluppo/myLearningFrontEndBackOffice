@@ -297,7 +297,7 @@ import { FaPersonBooth, FaUserTie } from 'react-icons/fa';
                     Password:
                     </Text>
                     <Input
-                    placeholder="firstname@name.io"
+                    placeholder=""
                     bg={'gray.100'}
                     border={0}
                     type='password'
@@ -315,7 +315,7 @@ import { FaPersonBooth, FaUserTie } from 'react-icons/fa';
                     Password Confirmation:
                     </Text>
                     <Input
-                    placeholder="firstname@name.io"
+                    placeholder=""
                     bg={'gray.100'}
                     border={0}
                     type='password'

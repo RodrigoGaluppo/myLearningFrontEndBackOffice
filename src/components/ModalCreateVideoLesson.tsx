@@ -99,7 +99,7 @@ const ModalCreateVideoLesson = ({isOpen,onClose}: {isOpen:boolean, onClose:()=>v
       <Loader isLoading={isLoading} />
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>New Lesson Text</ModalHeader>
+        <ModalHeader>New Lesson Video</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
          <FormControl>
